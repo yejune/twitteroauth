@@ -6,17 +6,22 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Test;
+namespace Limepie\TwitterOAuth\Test;
 
+use Limepie\TwitterOAuth\TwitterOAuth;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\TwitterOAuth;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TwitterOAuthProxyTest extends TestCase
 {
     /** @var TwitterOAuth */
     protected $twitter;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->twitter = new TwitterOAuth(
             CONSUMER_KEY,
@@ -25,7 +30,7 @@ class TwitterOAuthProxyTest extends TestCase
             ACCESS_TOKEN_SECRET,
         );
         $this->twitter->setApiVersion('1.1');
-        $this->userId = explode('-', ACCESS_TOKEN)[0];
+        $this->userId = \explode('-', ACCESS_TOKEN)[0];
     }
 
     /**
@@ -34,9 +39,9 @@ class TwitterOAuthProxyTest extends TestCase
     public function testSetProxy()
     {
         $this->twitter->setProxy([
-            'CURLOPT_PROXY' => PROXY,
+            'CURLOPT_PROXY'        => PROXY,
             'CURLOPT_PROXYUSERPWD' => PROXYUSERPWD,
-            'CURLOPT_PROXYPORT' => PROXYPORT,
+            'CURLOPT_PROXYPORT'    => PROXYPORT,
         ]);
         $this->twitter->setTimeouts(60, 60);
         $result = $this->twitter->get('account/verify_credentials');

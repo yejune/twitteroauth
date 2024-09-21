@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth;
+namespace Limepie\TwitterOAuth;
 
 /**
  * The result of the most recent API request.
@@ -11,29 +11,27 @@ namespace Abraham\TwitterOAuth;
  */
 class Response
 {
-    /** @var string|null API path from the most recent request */
+    /** @var null|string API path from the most recent request */
     private ?string $apiPath = null;
+
     /** @var int HTTP status code from the most recent request */
     private int $httpCode = 0;
+
     /** @var array HTTP headers from the most recent request */
     private array $headers = [];
-    /** @var array|object|null Response body from the most recent request */
-    private array|object|null $body = [];
+
+    /** @var null|array|object Response body from the most recent request */
+    private null|array|object $body = [];
+
     /** @var array HTTP headers from the most recent request that start with X */
     private array $xHeaders = [];
 
-    /**
-     * @param string $apiPath
-     */
-    public function setApiPath(string $apiPath): void
+    public function setApiPath(string $apiPath) : void
     {
         $this->apiPath = $apiPath;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getApiPath(): ?string
+    public function getApiPath() : ?string
     {
         return $this->apiPath;
     }
@@ -54,55 +52,37 @@ class Response
         return $this->body;
     }
 
-    /**
-     * @param int $httpCode
-     */
-    public function setHttpCode(int $httpCode): void
+    public function setHttpCode(int $httpCode) : void
     {
         $this->httpCode = $httpCode;
     }
 
-    /**
-     * @return int
-     */
-    public function getHttpCode(): int
+    public function getHttpCode() : int
     {
         return $this->httpCode;
     }
 
-    /**
-     * @param array $headers
-     */
-    public function setHeaders(array $headers): void
+    public function setHeaders(array $headers) : void
     {
         foreach ($headers as $key => $value) {
-            if (substr($key, 0, 1) == 'x') {
+            if ('x' == \substr($key, 0, 1)) {
                 $this->xHeaders[$key] = $value;
             }
         }
         $this->headers = $headers;
     }
 
-    /**
-     * @return array
-     */
-    public function getsHeaders(): array
+    public function getsHeaders() : array
     {
         return $this->headers;
     }
 
-    /**
-     * @param array $xHeaders
-     */
-    public function setXHeaders(array $xHeaders = []): void
+    public function setXHeaders(array $xHeaders = []) : void
     {
         $this->xHeaders = $xHeaders;
     }
 
-    /**
-     * @return array
-     */
-    public function getXHeaders(): array
+    public function getXHeaders() : array
     {
         return $this->xHeaders;
     }

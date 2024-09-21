@@ -2,21 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Tests;
+namespace Limepie\TwitterOAuth\Tests;
 
+use Limepie\TwitterOAuth\Consumer;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\Consumer;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class ConsumerTest extends TestCase
 {
     public function testToString()
     {
-        $key = uniqid();
-        $secret = uniqid();
+        $key      = \uniqid();
+        $secret   = \uniqid();
         $consumer = new Consumer($key, $secret);
 
         $this->assertEquals(
-            "Consumer[key=$key,secret=$secret]",
+            "Consumer[key={$key},secret={$secret}]",
             $consumer->__toString(),
         );
     }

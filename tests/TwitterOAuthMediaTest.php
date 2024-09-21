@@ -6,17 +6,23 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Test;
+namespace Limepie\TwitterOAuth\Test;
 
+use Limepie\TwitterOAuth\TwitterOAuth;
+use Limepie\TwitterOAuth\TwitterOAuthException;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\TwitterOAuth;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TwitterOAuthMediaTest extends TestCase
 {
     /** @var TwitterOAuth */
     protected $twitter;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->twitter = new TwitterOAuth(
             CONSUMER_KEY,
@@ -25,7 +31,7 @@ class TwitterOAuthMediaTest extends TestCase
             ACCESS_TOKEN_SECRET,
         );
         $this->twitter->setApiVersion('1.1');
-        $this->userId = explode('-', ACCESS_TOKEN)[0];
+        $this->userId = \explode('-', ACCESS_TOKEN)[0];
     }
 
     /**
@@ -36,19 +42,19 @@ class TwitterOAuthMediaTest extends TestCase
         $this->twitter->setTimeouts(60, 60);
         // Image source https://www.flickr.com/photos/titrans/8548825587/
         $file_path = __DIR__ . '/kitten.jpg';
-        $result = $this->twitter->upload('media/upload', [
+        $result    = $this->twitter->upload('media/upload', [
             'media' => $file_path,
         ]);
         $this->assertEquals(200, $this->twitter->getLastHttpCode());
         $this->assertObjectHasAttribute('media_id_string', $result);
         $parameters = [
-            'status' => 'Hello World ' . MOCK_TIME,
+            'status'    => 'Hello World ' . MOCK_TIME,
             'media_ids' => $result->media_id_string,
         ];
         $result = $this->twitter->post('statuses/update', $parameters);
         $this->assertEquals(200, $this->twitter->getLastHttpCode());
-        $result = $this->twitter->post('statuses/destroy/' . $result->id_str);
-        return $result;
+
+        return $this->twitter->post('statuses/destroy/' . $result->id_str);
     }
 
     /**
@@ -72,21 +78,21 @@ class TwitterOAuthMediaTest extends TestCase
         $this->twitter->setTimeouts(60, 30);
         // Video source http://www.sample-videos.com/
         $file_path = __DIR__ . '/video.mp4';
-        $result = $this->twitter->upload(
+        $result    = $this->twitter->upload(
             'media/upload',
-            ['media' => $file_path, 'media_type' => 'video/mp4'],
+            ['media'         => $file_path, 'media_type' => 'video/mp4'],
             ['chunkedUpload' => true],
         );
         $this->assertEquals(201, $this->twitter->getLastHttpCode());
         $this->assertObjectHasAttribute('media_id_string', $result);
         $parameters = [
-            'status' => 'Hello World ' . MOCK_TIME,
+            'status'    => 'Hello World ' . MOCK_TIME,
             'media_ids' => $result->media_id_string,
         ];
         $result = $this->twitter->post('statuses/update', $parameters);
         $this->assertEquals(200, $this->twitter->getLastHttpCode());
-        $result = $this->twitter->post('statuses/destroy/' . $result->id_str);
-        return $result;
+
+        return $this->twitter->post('statuses/destroy/' . $result->id_str);
     }
 
     /**
@@ -95,14 +101,14 @@ class TwitterOAuthMediaTest extends TestCase
     public function testPostStatusesUpdateWithMediaChunkedException()
     {
         $this->expectException(
-            \Abraham\TwitterOAuth\TwitterOAuthException::class,
+            TwitterOAuthException::class,
         );
         $this->expectErrorMessage('Missing "media_id_string"');
         // Video source http://www.sample-videos.com/
         $file_path = __DIR__ . '/video.mp4';
-        $result = $this->twitter->upload(
+        $result    = $this->twitter->upload(
             'media/upload',
-            ['media' => $file_path, 'media_type' => 'video/mp4'],
+            ['media'         => $file_path, 'media_type' => 'video/mp4'],
             ['chunkedUpload' => true],
         );
     }

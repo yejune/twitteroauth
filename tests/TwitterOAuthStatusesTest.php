@@ -6,17 +6,22 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Test;
+namespace Limepie\TwitterOAuth\Test;
 
+use Limepie\TwitterOAuth\TwitterOAuth;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\TwitterOAuth;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TwitterOAuthStatusesTest extends TestCase
 {
     /** @var TwitterOAuth */
     protected $twitter;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->twitter = new TwitterOAuth(
             CONSUMER_KEY,
@@ -25,7 +30,7 @@ class TwitterOAuthStatusesTest extends TestCase
             ACCESS_TOKEN_SECRET,
         );
         $this->twitter->setApiVersion('1.1');
-        $this->userId = explode('-', ACCESS_TOKEN)[0];
+        $this->userId = \explode('-', ACCESS_TOKEN)[0];
     }
 
     /**
@@ -44,18 +49,22 @@ class TwitterOAuthStatusesTest extends TestCase
     {
         $result = $this->twitter->get('search/tweets', ['q' => 'twitter']);
         $this->assertEquals(200, $this->twitter->getLastHttpCode());
+
         return $result->statuses;
     }
 
     /**
      * @depends testGetSearchTweets
+     *
      * @vcr testGetSearchTweetsWithMaxId.json
+     *
+     * @param mixed $statuses
      */
     public function testGetSearchTweetsWithMaxId($statuses)
     {
-        $maxId = array_pop($statuses)->id_str;
+        $maxId = \array_pop($statuses)->id_str;
         $this->twitter->get('search/tweets', [
-            'q' => 'twitter',
+            'q'      => 'twitter',
             'max_id' => $maxId,
         ]);
         $this->assertEquals(200, $this->twitter->getLastHttpCode());
@@ -70,12 +79,16 @@ class TwitterOAuthStatusesTest extends TestCase
             'status' => 'xこんにちは世界 ' . MOCK_TIME,
         ]);
         $this->assertEquals(200, $this->twitter->getLastHttpCode());
+
         return $result;
     }
 
     /**
      * @depends testPostStatusesUpdateUtf8
+     *
      * @vcr testPostStatusesDestroy.json
+     *
+     * @param mixed $status
      */
     public function testPostStatusesDestroy($status)
     {

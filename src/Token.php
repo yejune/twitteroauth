@@ -2,17 +2,18 @@
 
 /**
  * The MIT License
- * Copyright (c) 2007 Andy Smith
+ * Copyright (c) 2007 Andy Smith.
  */
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth;
+namespace Limepie\TwitterOAuth;
 
 class Token
 {
     /** @var string */
     public $key;
+
     /** @var string */
     public $secret;
 
@@ -22,19 +23,17 @@ class Token
      */
     public function __construct(?string $key, ?string $secret)
     {
-        $this->key = $key;
+        $this->key    = $key;
         $this->secret = $secret;
     }
 
     /**
      * Generates the basic string serialization of a token that a server
-     * would respond to request_token and access_token calls with
-     *
-     * @return string
+     * would respond to request_token and access_token calls with.
      */
-    public function __toString(): string
+    public function __toString() : string
     {
-        return sprintf(
+        return \sprintf(
             'oauth_token=%s&oauth_token_secret=%s',
             Util::urlencodeRfc3986($this->key),
             Util::urlencodeRfc3986($this->secret),

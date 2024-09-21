@@ -6,17 +6,22 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Test;
+namespace Limepie\TwitterOAuth\Test;
 
+use Limepie\TwitterOAuth\TwitterOAuth;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\TwitterOAuth;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TwitterOAuthV2Test extends TestCase
 {
     /** @var TwitterOAuth */
     protected $twitter;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->markTestSkipped('Fixtures need to be updated');
         $this->twitter = new TwitterOAuth(
@@ -25,7 +30,7 @@ class TwitterOAuthV2Test extends TestCase
             ACCESS_TOKEN,
             ACCESS_TOKEN_SECRET,
         );
-        $this->userId = explode('-', ACCESS_TOKEN)[0];
+        $this->userId = \explode('-', ACCESS_TOKEN)[0];
     }
 
     /**

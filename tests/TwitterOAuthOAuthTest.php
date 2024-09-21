@@ -6,17 +6,23 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Test;
+namespace Limepie\TwitterOAuth\Test;
 
+use Limepie\TwitterOAuth\TwitterOAuth;
+use Limepie\TwitterOAuth\TwitterOAuthException;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\TwitterOAuth;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TwitterOAuthOAuthTest extends TestCase
 {
     /** @var TwitterOAuth */
     protected $twitter;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->twitter = new TwitterOAuth(
             CONSUMER_KEY,
@@ -25,7 +31,7 @@ class TwitterOAuthOAuthTest extends TestCase
             ACCESS_TOKEN_SECRET,
         );
         $this->twitter->setApiVersion('1.1');
-        $this->userId = explode('-', ACCESS_TOKEN)[0];
+        $this->userId = \explode('-', ACCESS_TOKEN)[0];
     }
 
     public function testBuildClient()
@@ -56,19 +62,23 @@ class TwitterOAuthOAuthTest extends TestCase
     public function testOauth2Token()
     {
         $twitter = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
-        $result = $twitter->oauth2('oauth2/token', [
+        $result  = $twitter->oauth2('oauth2/token', [
             'grant_type' => 'client_credentials',
         ]);
         $this->assertEquals(200, $twitter->getLastHttpCode());
         $this->assertObjectHasAttribute('token_type', $result);
         $this->assertObjectHasAttribute('access_token', $result);
         $this->assertEquals('bearer', $result->token_type);
+
         return $result;
     }
 
     /**
      * @depends testOauth2Token
+     *
      * @vcr testOauth2BearerToken.json
+     *
+     * @param mixed $accessToken
      */
     public function testOauth2BearerToken($accessToken)
     {
@@ -83,19 +93,23 @@ class TwitterOAuthOAuthTest extends TestCase
             'screen_name' => 'twitterapi',
         ]);
         $this->assertEquals(200, $twitter->getLastHttpCode());
+
         return $accessToken;
     }
 
     /**
      * @depends testOauth2BearerToken
+     *
      * @vcr testOauth2TokenInvalidate.json
+     *
+     * @param mixed $accessToken
      */
     public function testOauth2TokenInvalidate($accessToken)
     {
         $twitter = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
         // HACK: access_token is already urlencoded but gets urlencoded again breaking the invalidate request.
         $result = $twitter->oauth2('oauth2/invalidate_token', [
-            'access_token' => urldecode($accessToken->access_token),
+            'access_token' => \urldecode($accessToken->access_token),
         ]);
         $this->assertEquals(200, $twitter->getLastHttpCode());
         $this->assertObjectHasAttribute('access_token', $result);
@@ -107,7 +121,7 @@ class TwitterOAuthOAuthTest extends TestCase
     public function testOauthRequestToken()
     {
         $twitter = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
-        $result = $twitter->oauth('oauth/request_token', [
+        $result  = $twitter->oauth('oauth/request_token', [
             'oauth_callback' => OAUTH_CALLBACK,
         ]);
         $this->assertEquals(200, $twitter->getLastHttpCode());
@@ -115,6 +129,7 @@ class TwitterOAuthOAuthTest extends TestCase
         $this->assertArrayHasKey('oauth_token_secret', $result);
         $this->assertArrayHasKey('oauth_callback_confirmed', $result);
         $this->assertEquals('true', $result['oauth_callback_confirmed']);
+
         return $result;
     }
 
@@ -124,24 +139,25 @@ class TwitterOAuthOAuthTest extends TestCase
     public function testOauthRequestTokenException()
     {
         $this->expectException(
-            \Abraham\TwitterOAuth\TwitterOAuthException::class,
+            TwitterOAuthException::class,
         );
         $this->expectErrorMessage('Could not authenticate you');
         $twitter = new TwitterOAuth('CONSUMER_KEY', 'CONSUMER_SECRET');
-        $result = $twitter->oauth('oauth/request_token', [
+        $result  = $twitter->oauth('oauth/request_token', [
             'oauth_callback' => OAUTH_CALLBACK,
         ]);
     }
 
     /**
      * @depends testOauthRequestToken
+     *
      * @vcr testOauthAccessTokenTokenException.json
      */
     public function testOauthAccessTokenTokenException(array $requestToken)
     {
         // Can't test this without a browser logging into Twitter so check for the correct error instead.
         $this->expectException(
-            \Abraham\TwitterOAuth\TwitterOAuthException::class,
+            TwitterOAuthException::class,
         );
         $this->expectErrorMessage('Invalid oauth_verifier parameter');
         $twitter = new TwitterOAuth(

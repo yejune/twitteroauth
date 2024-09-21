@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Tests;
+namespace Limepie\TwitterOAuth\Tests;
 
+use Limepie\TwitterOAuth\Consumer;
+use Limepie\TwitterOAuth\Request;
+use Limepie\TwitterOAuth\Token;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractSignatureMethodTest extends TestCase
@@ -24,6 +27,11 @@ abstract class AbstractSignatureMethodTest extends TestCase
 
     /**
      * @dataProvider signatureDataProvider
+     *
+     * @param mixed $expected
+     * @param mixed $request
+     * @param mixed $consumer
+     * @param mixed $token
      */
     public function testBuildSignature($expected, $request, $consumer, $token)
     {
@@ -35,9 +43,10 @@ abstract class AbstractSignatureMethodTest extends TestCase
 
     protected function getRequest()
     {
-        return $this->getMockBuilder(\Abraham\TwitterOAuth\Request::class)
+        return $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMock()
+        ;
     }
 
     protected function getConsumer(
@@ -45,15 +54,17 @@ abstract class AbstractSignatureMethodTest extends TestCase
         $secret = null,
         $callbackUrl = null,
     ) {
-        return $this->getMockBuilder(\Abraham\TwitterOAuth\Consumer::class)
+        return $this->getMockBuilder(Consumer::class)
             ->setConstructorArgs([$key, $secret, $callbackUrl])
-            ->getMock();
+            ->getMock()
+        ;
     }
 
     protected function getToken($key = null, $secret = null)
     {
-        return $this->getMockBuilder(\Abraham\TwitterOAuth\Token::class)
+        return $this->getMockBuilder(Token::class)
             ->setConstructorArgs([$key, $secret])
-            ->getMock();
+            ->getMock()
+        ;
     }
 }

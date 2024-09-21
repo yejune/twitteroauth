@@ -2,15 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Tests;
+namespace Limepie\TwitterOAuth\Tests;
 
+use Limepie\TwitterOAuth\Token;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\Token;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TokenTest extends TestCase
 {
     /**
      * @dataProvider tokenProvider
+     *
+     * @param mixed $expected
+     * @param mixed $key
+     * @param mixed $secret
      */
     public function testToString($expected, $key, $secret)
     {

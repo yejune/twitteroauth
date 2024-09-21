@@ -2,10 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Tests;
+namespace Limepie\TwitterOAuth\Tests;
 
-use Abraham\TwitterOAuth\HmacSha1;
+use Limepie\TwitterOAuth\HmacSha1;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class HmacSha1Test extends AbstractSignatureMethodTest
 {
     protected $name = 'HMAC-SHA1';

@@ -2,66 +2,62 @@
 
 /**
  * The MIT License
- * Copyright (c) 2007 Andy Smith
+ * Copyright (c) 2007 Andy Smith.
  */
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth;
+namespace Limepie\TwitterOAuth;
 
 class Request
 {
     protected $parameters;
+
     protected $httpMethod;
+
     protected $httpUrl;
+
     public static $version = '1.0';
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param string     $httpMethod
-     * @param string     $httpUrl
-     * @param ?array     $parameters
+     * @param ?array $parameters
      */
     public function __construct(
         string $httpMethod,
         string $httpUrl,
         ?array $parameters = [],
     ) {
-        $parameters = array_merge(
-            Util::parseParameters(parse_url($httpUrl, PHP_URL_QUERY)),
+        $parameters = \array_merge(
+            Util::parseParameters(\parse_url($httpUrl, PHP_URL_QUERY)),
             $parameters,
         );
         $this->parameters = $parameters;
         $this->httpMethod = $httpMethod;
-        $this->httpUrl = $httpUrl;
+        $this->httpUrl    = $httpUrl;
     }
 
     /**
-     * pretty much a helper function to set up the request
-     *
-     * @param Consumer $consumer
-     * @param Token    $token
-     * @param string   $httpMethod
-     * @param string   $httpUrl
-     * @param array    $parameters
+     * pretty much a helper function to set up the request.
      *
      * @return Request
      */
     public static function fromConsumerAndToken(
         Consumer $consumer,
-        Token $token = null,
+        ?Token $token = null,
         string $httpMethod,
         string $httpUrl,
         array $parameters = [],
         array $options = [],
     ) {
         $defaults = [
-            'oauth_version' => Request::$version,
-            'oauth_nonce' => Request::generateNonce(),
-            'oauth_timestamp' => time(),
+            'oauth_version'      => Request::$version,
+            'oauth_nonce'        => Request::generateNonce(),
+            'oauth_timestamp'    => \time(),
             'oauth_consumer_key' => $consumer->key,
         ];
+
         if (null !== $token) {
             $defaults['oauth_token'] = $token->key;
         }
@@ -71,53 +67,36 @@ class Request
         if ($options['jsonPayload'] ?? false) {
             $parameters = $defaults;
         } else {
-            $parameters = array_merge($defaults, $parameters);
+            $parameters = \array_merge($defaults, $parameters);
         }
 
         return new Request($httpMethod, $httpUrl, $parameters);
     }
 
-    /**
-     * @param string $name
-     * @param string $value
-     */
     public function setParameter(string $name, string $value)
     {
         $this->parameters[$name] = $value;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string|null
-     */
-    public function getParameter(string $name): ?string
+    public function getParameter(string $name) : ?string
     {
         return $this->parameters[$name] ?? null;
     }
 
-    /**
-     * @return array
-     */
-    public function getParameters(): array
+    public function getParameters() : array
     {
         return $this->parameters;
     }
 
-    /**
-     * @param string $name
-     */
-    public function removeParameter(string $name): void
+    public function removeParameter(string $name) : void
     {
         unset($this->parameters[$name]);
     }
 
     /**
      * The request parameters, sorted and concatenated into a normalized string.
-     *
-     * @return string
      */
-    public function getSignableParameters(): string
+    public function getSignableParameters() : string
     {
         // Grab all parameters
         $params = $this->parameters;
@@ -132,15 +111,13 @@ class Request
     }
 
     /**
-     * Returns the base string of this request
+     * Returns the base string of this request.
      *
      * The base string defined as the method, the url
      * and the parameters (normalized), each urlencoded
      * and the concated with &.
-     *
-     * @return string
      */
-    public function getSignatureBaseString(): string
+    public function getSignatureBaseString() : string
     {
         $parts = [
             $this->getNormalizedHttpMethod(),
@@ -150,108 +127,96 @@ class Request
 
         $parts = Util::urlencodeRfc3986($parts);
 
-        return implode('&', $parts);
+        return \implode('&', $parts);
     }
 
     /**
-     * Returns the HTTP Method in uppercase
-     *
-     * @return string
+     * Returns the HTTP Method in uppercase.
      */
-    public function getNormalizedHttpMethod(): string
+    public function getNormalizedHttpMethod() : string
     {
-        return strtoupper($this->httpMethod);
+        return \strtoupper($this->httpMethod);
     }
 
     /**
      * parses the url and rebuilds it to be
-     * scheme://host/path
-     *
-     * @return string
+     * scheme://host/path.
      */
-    public function getNormalizedHttpUrl(): string
+    public function getNormalizedHttpUrl() : string
     {
-        $parts = parse_url($this->httpUrl);
+        $parts = \parse_url($this->httpUrl);
 
         $scheme = $parts['scheme'];
-        $host = strtolower($parts['host']);
-        $path = $parts['path'];
+        $host   = \strtolower($parts['host']);
+        $path   = $parts['path'];
 
-        return "$scheme://$host$path";
+        return "{$scheme}://{$host}{$path}";
     }
 
     /**
-     * Builds a url usable for a GET request
-     *
-     * @return string
+     * Builds a url usable for a GET request.
      */
-    public function toUrl(): string
+    public function toUrl() : string
     {
         $postData = $this->toPostdata();
-        $out = $this->getNormalizedHttpUrl();
+        $out      = $this->getNormalizedHttpUrl();
+
         if ($postData) {
             $out .= '?' . $postData;
         }
+
         return $out;
     }
 
     /**
-     * Builds the data one would send in a POST request
-     *
-     * @return string
+     * Builds the data one would send in a POST request.
      */
-    public function toPostdata(): string
+    public function toPostdata() : string
     {
         return Util::buildHttpQuery($this->parameters);
     }
 
     /**
-     * Builds the Authorization: header
+     * Builds the Authorization: header.
      *
-     * @return string
      * @throws TwitterOAuthException
      */
-    public function toHeader(): string
+    public function toHeader() : string
     {
         $first = true;
-        $out = 'Authorization: OAuth';
+        $out   = 'Authorization: OAuth';
+
         foreach ($this->parameters as $k => $v) {
-            if (substr($k, 0, 5) != 'oauth') {
+            if ('oauth' != \substr($k, 0, 5)) {
                 continue;
             }
-            if (is_array($v)) {
+
+            if (\is_array($v)) {
                 throw new TwitterOAuthException(
                     'Arrays not supported in headers',
                 );
             }
             $out .= $first ? ' ' : ', ';
-            $out .=
-                Util::urlencodeRfc3986($k) .
-                '="' .
-                Util::urlencodeRfc3986($v) .
-                '"';
+            $out
+                .= Util::urlencodeRfc3986($k)
+                . '="'
+                . Util::urlencodeRfc3986($v)
+                . '"';
             $first = false;
         }
+
         return $out;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString(): string
+    public function __toString() : string
     {
         return $this->toUrl();
     }
 
-    /**
-     * @param SignatureMethod $signatureMethod
-     * @param Consumer        $consumer
-     * @param Token           $token
-     */
     public function signRequest(
         SignatureMethod $signatureMethod,
         Consumer $consumer,
-        Token $token = null,
+        ?Token $token = null,
     ) {
         $this->setParameter(
             'oauth_signature_method',
@@ -261,26 +226,16 @@ class Request
         $this->setParameter('oauth_signature', $signature);
     }
 
-    /**
-     * @param SignatureMethod $signatureMethod
-     * @param Consumer        $consumer
-     * @param Token           $token
-     *
-     * @return string
-     */
     public function buildSignature(
         SignatureMethod $signatureMethod,
         Consumer $consumer,
-        Token $token = null,
-    ): string {
+        ?Token $token = null,
+    ) : string {
         return $signatureMethod->buildSignature($this, $consumer, $token);
     }
 
-    /**
-     * @return string
-     */
-    public static function generateNonce(): string
+    public static function generateNonce() : string
     {
-        return md5(microtime() . random_int(PHP_INT_MIN, PHP_INT_MAX));
+        return \md5(\microtime() . \random_int(PHP_INT_MIN, PHP_INT_MAX));
     }
 }

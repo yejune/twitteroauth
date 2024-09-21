@@ -1,6 +1,6 @@
 <?php
 
-namespace Abraham\TwitterOAuth\Util;
+namespace Limepie\TwitterOAuth\Util;
 
 /**
  * @author louis <louis@systemli.org>
@@ -8,22 +8,19 @@ namespace Abraham\TwitterOAuth\Util;
 class JsonDecoder
 {
     /**
-     * Decodes a JSON string to stdObject or associative array
-     *
-     * @param string $string
-     * @param bool   $asArray
+     * Decodes a JSON string to stdObject or associative array.
      *
      * @return array|object
      */
     public static function decode(string $string, bool $asArray)
     {
         if (
-            version_compare(PHP_VERSION, '5.4.0', '>=') &&
-            !(defined('JSON_C_VERSION') && PHP_INT_SIZE > 4)
+            \version_compare(PHP_VERSION, '5.4.0', '>=')
+            && !(\defined('JSON_C_VERSION') && PHP_INT_SIZE > 4)
         ) {
-            return json_decode($string, $asArray, 512, JSON_BIGINT_AS_STRING);
+            return \json_decode($string, $asArray, 512, JSON_BIGINT_AS_STRING);
         }
 
-        return json_decode($string, $asArray, 512, JSON_THROW_ON_ERROR);
+        return \json_decode($string, $asArray, 512, JSON_THROW_ON_ERROR);
     }
 }

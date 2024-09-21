@@ -1,14 +1,23 @@
 <?php
 
-namespace Abraham\TwitterOAuth\Tests;
+namespace Limepie\TwitterOAuth\Tests;
 
+use Limepie\TwitterOAuth\Util\JsonDecoder;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\Util\JsonDecoder;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class JsonDecoderTest extends TestCase
 {
     /**
      * @dataProvider jsonProvider
+     *
+     * @param mixed $input
+     * @param mixed $asArray
+     * @param mixed $expected
      */
     public function testDecode($input, $asArray, $expected)
     {
@@ -33,6 +42,7 @@ class JsonDecoderTest extends TestCase
                 [
                     $this->getClass(function ($object) {
                         $object->id = 556_179_961_825_226_750;
+
                         return $object;
                     }),
                 ],

@@ -6,17 +6,22 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Test;
+namespace Limepie\TwitterOAuth\Test;
 
+use Limepie\TwitterOAuth\TwitterOAuth;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\TwitterOAuth;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TwitterOAuthFavoritesTest extends TestCase
 {
     /** @var TwitterOAuth */
     protected $twitter;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->twitter = new TwitterOAuth(
             CONSUMER_KEY,
@@ -25,7 +30,7 @@ class TwitterOAuthFavoritesTest extends TestCase
             ACCESS_TOKEN_SECRET,
         );
         $this->twitter->setApiVersion('1.1');
-        $this->userId = explode('-', ACCESS_TOKEN)[0];
+        $this->userId = \explode('-', ACCESS_TOKEN)[0];
     }
 
     /**
@@ -41,6 +46,7 @@ class TwitterOAuthFavoritesTest extends TestCase
 
     /**
      * @depends testPostFavoritesCreate
+     *
      * @vcr testPostFavoritesDestroy.json
      */
     public function testPostFavoritesDestroy()

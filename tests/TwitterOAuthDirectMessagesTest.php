@@ -6,17 +6,22 @@
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth\Test;
+namespace Limepie\TwitterOAuth\Test;
 
+use Limepie\TwitterOAuth\TwitterOAuth;
 use PHPUnit\Framework\TestCase;
-use Abraham\TwitterOAuth\TwitterOAuth;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TwitterOAuthDirectMessagesTest extends TestCase
 {
     /** @var TwitterOAuth */
     protected $twitter;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->twitter = new TwitterOAuth(
             CONSUMER_KEY,
@@ -25,7 +30,7 @@ class TwitterOAuthDirectMessagesTest extends TestCase
             ACCESS_TOKEN_SECRET,
         );
         $this->twitter->setApiVersion('1.1');
-        $this->userId = explode('-', ACCESS_TOKEN)[0];
+        $this->userId = \explode('-', ACCESS_TOKEN)[0];
     }
 
     /**
@@ -35,7 +40,7 @@ class TwitterOAuthDirectMessagesTest extends TestCase
     {
         $data = [
             'event' => [
-                'type' => 'message_create',
+                'type'           => 'message_create',
                 'message_create' => [
                     'target' => [
                         'recipient_id' => $this->userId,
@@ -50,12 +55,16 @@ class TwitterOAuthDirectMessagesTest extends TestCase
             'jsonPayload' => true,
         ]);
         $this->assertEquals(200, $this->twitter->getLastHttpCode());
+
         return $result;
     }
 
     /**
      * @depends testPostDirectMessagesEventsNew
+     *
      * @vcr testDeleteDirectMessagesEventsDestroy.json
+     *
+     * @param mixed $message
      */
     public function testDeleteDirectMessagesEventsDestroy($message)
     {

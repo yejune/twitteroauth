@@ -2,25 +2,25 @@
 
 /**
  * The MIT License
- * Copyright (c) 2007 Andy Smith
+ * Copyright (c) 2007 Andy Smith.
  */
 
 declare(strict_types=1);
 
-namespace Abraham\TwitterOAuth;
+namespace Limepie\TwitterOAuth;
 
 class Consumer
 {
-    /** @var string  */
+    /** @var string */
     public $key;
-    /** @var string  */
+
+    /** @var string */
     public $secret;
-    /** @var string|null  */
+
+    /** @var null|string */
     public $callbackUrl;
 
     /**
-     * @param string|null $key
-     * @param string|null $secret
      * @param null $callbackUrl
      */
     public function __construct(
@@ -28,8 +28,8 @@ class Consumer
         ?string $secret,
         ?string $callbackUrl = null,
     ) {
-        $this->key = $key;
-        $this->secret = $secret;
+        $this->key         = $key;
+        $this->secret      = $secret;
         $this->callbackUrl = $callbackUrl;
     }
 
@@ -38,6 +38,6 @@ class Consumer
      */
     public function __toString()
     {
-        return "Consumer[key=$this->key,secret=$this->secret]";
+        return "Consumer[key={$this->key},secret={$this->secret}]";
     }
 }
